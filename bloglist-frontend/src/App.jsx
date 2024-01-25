@@ -4,6 +4,8 @@ import blogService from './services/blogs'
 import loginService from './services/login'
 import Notification from './components/Notification'
 import './index.css'
+import BlogForm from './components/BlogForm'
+import Togglable from './components/Togglable'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -11,10 +13,6 @@ const App = () => {
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
   const [message, setMessage] = useState(null)
-  const [newAuthor, setNewAuthor] = useState('')
-  const [newTitle, setNewTitle] = useState('')
-  const [newUrl, setNewUrl] = useState('')
-  const [newBlog, setNewBlog] = useState('')
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -63,27 +61,7 @@ const App = () => {
       }, 5000)
   }
 
-  
-  const handleTitleChange = (event) => {
-    setNewTitle(event.target.value)
-  }
-
-  const handleAuthorChange = (event) => {
-    setNewAuthor(event.target.value)
-  }
-
-  const handleUrlChange = (event) => {
-    setNewUrl(event.target.value)
-  }
-
-
-  const addBlog = (event) => {
-    event.preventDefault()
-    const blogObject = {
-      title: newTitle,
-      author: newAuthor,
-      url: newUrl
-    }
+  const addBlog = (blogObject) => {
     console.log(blogObject)
   
     try {
@@ -91,7 +69,6 @@ const App = () => {
       .create(blogObject)
         .then(returnedBlog => {
         setBlogs(blogs.concat(returnedBlog))
-        setNewBlog('')
         setMessage(`a new blog ${blogObject.title} by ${blogObject.author} added`)
         setTimeout(() => {
           setMessage(null)
@@ -105,19 +82,17 @@ const App = () => {
       }
   }
 
-  if (user === null) {
-    return (
-      <div>
-        <h2>Log in to application</h2>
-        <Notification message={message} />
-        <form onSubmit={handleLogin}>
-          <div>
-            username
-              <input
-              type="text"
-              value={username}
-              name="Username"
-              onChange={({ target }) => setUsername(target.value)}
+  const loginForm = () => (
+    <div>
+      <h2>Log in to application</h2>
+      <form onSubmit={handleLogin}>
+        <div>
+         username
+            <input
+            type="text"
+            value={username}
+            name="Username"
+            onChange={({ target }) => setUsername(target.value)}
           />
         </div>
         <div>
@@ -129,39 +104,39 @@ const App = () => {
             onChange={({ target }) => setPassword(target.value)}
           />
         </div>
-        <button type="submit">login</button>
-      </form>
-      </div>
+      <button type="submit">login</button>
+    </form>
+    </div>      
+  )
+
+  const blogForm = () => {
+    return (
+      <Togglable buttonLabel= "new blog">
+        <BlogForm createBlog={addBlog} />
+      </Togglable>
     )
+  }
+
+  function compareLikes(a, b) {
+    return b.likes - a.likes
   }
 
   return (
     <div>
-    <h2>blogs</h2>
-    <p>{user.name} is logged in</p>
-    <Notification message={message} />
-    <form onSubmit={handleLogout}>
-      <button type="submit">logout</button>
-    </form>
-    <h2>create new</h2>
-    <form onSubmit={addBlog}>
-      <div>
-        title:
-        <input value={newTitle} onChange={handleTitleChange}/>
-      </div>
-      <div>
-        author:
-          <input value={newAuthor} onChange={handleAuthorChange}/>
-      </div>
-      <div>
-        url:
-          <input value={newUrl} onChange={handleUrlChange}/>
-      </div>
-      <button type="submit">create</button>
-    </form>
+      <h2>blogs</h2>
+      <Notification message={message} />
 
-    {blogs.map(blog =>
-      <Blog key={blog.id} blog={blog} />
+      {!user && loginForm()}
+      {user && <div>
+        <p>{user.name} is logged in</p>
+        <form onSubmit={handleLogout}>
+        <button type="submit">logout</button>
+      </form>
+      {blogForm()}
+    </div>
+}
+    {blogs.sort(compareLikes).map(blog =>
+      <Blog key={blog.id} blog={blog} user={user} />
     )}
   </div>
   )
