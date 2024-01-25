@@ -27,7 +27,7 @@ const Blog = ({ blog }) => {
   const updateBlog = async (blogUpdate) => {
     const updatedBlog = await blogService
       .update(blogUpdate.id, blogUpdate)
-      setBlogs(blogs.map(blog => blog.id !== blogUpdate.id ? blog : updatedBlog))
+    setBlogs(blogs.map(blog => blog.id !== blogUpdate.id ? blog : updatedBlog))
   }
 
   const removeBlog = async (blogToRemove) => {
@@ -35,36 +35,35 @@ const Blog = ({ blog }) => {
       try {
         await blogService
           .remove(blogToRemove.id)
-          setMessage('blog deleted')
-          setTimeout(() => {
-            setMessage(null)
-          }, 5000)
-          setBlogs(blogs.filter(blog => blog.id !== blogToRemove.id))
+        setMessage('blog deleted')
+        setTimeout(() => {
+          setMessage(null)
+        }, 5000)
+        setBlogs(blogs.filter(blog => blog.id !== blogToRemove.id))
       } catch(exception) {
-      setMessage('cannot delete blog')
-      setTimeout(() => {
-        setMessage(null)
-      }, 5000)
+        setMessage('cannot delete blog')
+        setTimeout(() => {
+          setMessage(null)
+        }, 5000)
       }
     }
   }
 
   return (
-  <div style={blogStyle}>
-    <div style={hideWhenVisible}>
-      {blog.title} {blog.author}
-      <button onClick={() => setVisible(true)}>view</button>
+    <div style={blogStyle}>
+      <div style={hideWhenVisible}>
+        {blog.title} {blog.author}
+        <button onClick={() => setVisible(true)}>view</button>
+      </div>
+      <div style={showWhenVisible}>
+        {blog.title} {blog.author}
+        <button onClick={() => setVisible(false)}>hide</button>
+        <div>{blog.url}</div>
+        <div>likes {blog.likes} <button onClick={addLike}>like</button></div>
+        <div> {blog.user.name}</div>
+      </div>
+      <div><button onClick={() => removeBlog(blog)}>remove</button></div>
     </div>
-    <div style={showWhenVisible}>
-    {blog.title} {blog.author}
-    <button onClick={() => setVisible(false)}>hide</button>
-    <div>{blog.url}</div>
-    <div>likes {blog.likes}</div>
-    <button onClick={addLike}>like</button>
-    <div> {blog.user.name}</div>
-    </div>
-    <div><button onClick={() => removeBlog(blog)}>remove</button></div>
-  </div>  
   )
 }
 

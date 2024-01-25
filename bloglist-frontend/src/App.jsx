@@ -9,7 +9,7 @@ import Togglable from './components/Togglable'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
-  const [username, setUsername] = useState('') 
+  const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
   const [message, setMessage] = useState(null)
@@ -17,7 +17,7 @@ const App = () => {
   useEffect(() => {
     blogService.getAll().then(blogs =>
       setBlogs(blogs)
-    )  
+    )
   }, [])
 
   useEffect(() => {
@@ -56,30 +56,30 @@ const App = () => {
     setUsername('')
     setPassword('')
     setMessage('logged out')
-      setTimeout(() => {
-        setMessage(null)
-      }, 5000)
+    setTimeout(() => {
+      setMessage(null)
+    }, 5000)
   }
 
   const addBlog = (blogObject) => {
     console.log(blogObject)
-  
+
     try {
-    blogService
-      .create(blogObject)
+      blogService
+        .create(blogObject)
         .then(returnedBlog => {
-        setBlogs(blogs.concat(returnedBlog))
-        setMessage(`a new blog ${blogObject.title} by ${blogObject.author} added`)
-        setTimeout(() => {
-          setMessage(null)
-        }, 5000)
-      })
-      } catch(exception) {
-          setMessage(`problem with adding a blog: ${exception}`)
+          setBlogs(blogs.concat(returnedBlog))
+          setMessage(`a new blog ${blogObject.title} by ${blogObject.author} added`)
           setTimeout(() => {
             setMessage(null)
           }, 5000)
-      }
+        })
+    } catch(exception) {
+      setMessage(`problem with adding a blog: ${exception}`)
+      setTimeout(() => {
+        setMessage(null)
+      }, 5000)
+    }
   }
 
   const loginForm = () => (
@@ -88,7 +88,7 @@ const App = () => {
       <form onSubmit={handleLogin}>
         <div>
          username
-            <input
+          <input
             type="text"
             value={username}
             name="Username"
@@ -97,16 +97,16 @@ const App = () => {
         </div>
         <div>
           password
-            <input
+          <input
             type="password"
             value={password}
             name="Password"
             onChange={({ target }) => setPassword(target.value)}
           />
         </div>
-      <button type="submit">login</button>
-    </form>
-    </div>      
+        <button type="submit">login</button>
+      </form>
+    </div>
   )
 
   const blogForm = () => {
@@ -130,15 +130,15 @@ const App = () => {
       {user && <div>
         <p>{user.name} is logged in</p>
         <form onSubmit={handleLogout}>
-        <button type="submit">logout</button>
-      </form>
-      {blogForm()}
+          <button type="submit">logout</button>
+        </form>
+        {blogForm()}
+      </div>
+      }
+      {blogs.sort(compareLikes).map(blog =>
+        <Blog key={blog.id} blog={blog} user={user} />
+      )}
     </div>
-}
-    {blogs.sort(compareLikes).map(blog =>
-      <Blog key={blog.id} blog={blog} user={user} />
-    )}
-  </div>
   )
 }
 
