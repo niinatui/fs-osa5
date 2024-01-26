@@ -53,14 +53,13 @@ const Blog = ({ blog }) => {
     <div style={blogStyle}>
       <div style={hideWhenVisible}>
         {blog.title} {blog.author}
-        <button onClick={() => setVisible(true)}>view</button>
+        <button id="view" onClick={() => setVisible(true)}>view</button>
       </div>
       <div style={showWhenVisible}>
         {blog.title} {blog.author}
         <button onClick={() => setVisible(false)}>hide</button>
         <div>{blog.url}</div>
-        <div>likes {blog.likes} <button onClick={addLike}>like</button></div>
-        <div> {blog.user.name}</div>
+        <div>likes {blog.likes} <button id="like" onClick={addLike}>like</button></div>
       </div>
       <div><button onClick={() => removeBlog(blog)}>remove</button></div>
     </div>
